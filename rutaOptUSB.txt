@@ -1,0 +1,7 @@
+3 
+4
+DestinoA 10.0 DestinoB 15.0 DestinoC 20.0
+Bus1 USB Punto1 DestinoA 5.0
+Bus2 USB Punto2 Punto3 DestinoB 3.0
+Bus3 DestinoA Punto4 DestinoC 2.0
+Bus4 Punto1 DestinoB 4.0
