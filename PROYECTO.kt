@@ -66,16 +66,17 @@ class Graph {
 
 fun main() {
     // Nombre del archivo de entrada
-    val fileName = "input.txt" // Puedes cambiar este nombre si lo deseas
+    val archivo = "rutaOptUSB.txt"
 
     // Leer el archivo de entrada
-    val scanner = Scanner(File(fileName))
+    val scanner = Scanner(File(archivo))
 
     // Leer cantidad de autobuses y recorridos
     val numBuses = scanner.nextInt()
     val numRoutes = scanner.nextInt()
     scanner.nextLine() // Consumir línea vacía
 
+    // Crea un grafo
     val graph = Graph()
 
     // Leer la ruta principal con múltiples destinos y distancias
@@ -103,23 +104,33 @@ fun main() {
         }
     }
 
-    // Ejecutar Kruskal para obtener el MST
+    // Ejecutar Kruskal para obtener el árbol de expansión mínima
     val mst = graph.kruskal()
 
-    // Encontrar la ruta más óptima (la de menor costo total de combustible)
-    val rutaOptima = mst.minByOrNull { it.fuelCost }
+    // Encontrar la ruta más óptima que empiece por "USB" (la de menor costo total de combustible)
+    val rutaOptima = mst.filter { it.start == "USB" }.minByOrNull { it.fuelCost }
 
-    // Imprimir solo la ruta más óptima
-    if (rutaOptima != null) {
-        val busRoute = graph.getBusRoute(rutaOptima.bus) // Usar el nuevo método
-        val distancia = graph.getDistance(rutaOptima.start, rutaOptima.destination) ?: "Desconocida"
-        println("\nRuta más óptima:")
-        print("${busRoute?.bus}: ")
-        busRoute?.route?.forEach { print("$it ") } // Imprimir todos los puntos
-        println("(${distancia} km, ${rutaOptima.fuelCost} L)")
-    } else {
-        println("\nNo se encontraron rutas.")
-    }
+    // Encontrar la ruta más óptima que termine en "USB" (la de menor costo total de combustible)
+    val rutaOptimaFinal = mst.filter { it.destination == "USB" }.minByOrNull { it.fuelCost }
 
+    // Función para imprimir la ruta más óptima
+    fun printRutaOptima(ruta: Edge?, label: String) {
+        if (ruta != null) {
+            val busRoute = graph.getBusRoute(ruta.bus)
+            val distancia = graph.getDistance(ruta.start, ruta.destination) ?: "Desconocida"
+            println("\n${label}:")
+            print("${busRoute?.bus}: ")
+            busRoute?.route?.forEach { print("$it ") } // Imprimir todos los puntos
+            println("(${distancia} km, ${ruta.fuelCost} L)")
+        } else {
+            // Si no se encontró la ruta más óptima de llegada, se imprime por consola el mensaje.
+            println("\nNo se encontró ${label.lowercase()}.")
+        }
+    }   
+
+    // Imprimir la ruta más óptima
+    printRutaOptima(rutaOptima, "Ruta más óptima")
+    printRutaOptima(rutaOptimaFinal, "Ruta óptima final")
+    
     scanner.close() // Cerrar el archivo
 }
